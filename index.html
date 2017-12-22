@@ -1,0 +1,79 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>TreeGrid Example</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="stylesheet" href="css/normalize.css">
+        <link rel="stylesheet" href="css/main.css">
+        <link rel="stylesheet" href="css/vendor/bootstrap.min.css">
+        <link rel="stylesheet" href="css/vendor/jqx.base.css">
+        <link rel="stylesheet" href="css/vendor/jqx.bootstrap.css">
+    </head>
+    <body>
+        <h1>Tree Grid Example</h1>
+
+        <div id="treeGrid">
+        </div>
+
+        <script src="js/vendor/jquery-3.2.1.min.js"></script>
+        <script src="js/vendor/popper.min.js"></script>
+        <script src="js/vendor/bootstrap.min.js"></script>
+        <script src="js/vendor/jqxcore.js"></script>
+        <script src="js/vendor/jqxdata.js"></script>
+        <script src="js/vendor/jqxbuttons.js"></script>
+        <script src="js/vendor/jqxscrollbar.js"></script>
+        <script src="js/vendor/jqxlistbox.js"></script>
+        <script src="js/vendor/jqxdropdownlist.js"></script>
+        <script src="js/vendor/jqxdatatable.js"></script>
+        <script src="js/vendor/jqxtreegrid.js"></script>
+        <script>
+            $(document).ready(function () {
+                $.getJSON('data.json', function(data) {
+                    var employees = data;
+                    // prepare the data
+                    var source = {
+                        dataType: "json",
+                        dataFields: [
+                            { name: 'EmployeeID', type: 'number' },
+                            { name: 'ReportsTo', type: 'number' },
+                            { name: 'FirstName', type: 'string' },
+                            { name: 'LastName', type: 'string' },
+                            { name: 'Country', type: 'string' },
+                            { name: 'City', type: 'string' },
+                            { name: 'Address', type: 'string' },
+                            { name: 'Title', type: 'string' },
+                            { name: 'HireDate', type: 'date' },
+                            { name: 'BirthDate', type: 'date' }
+                        ],
+                        hierarchy: {
+                            keyDataField: { name: 'EmployeeID' },
+                            parentDataField: { name: 'ReportsTo' }
+                        },
+                        id: 'EmployeeID',
+                        localData: employees
+                    };
+                    var dataAdapter = new $.jqx.dataAdapter(source);
+
+                    $("#treeGrid").jqxTreeGrid(
+                    {
+                        source: dataAdapter,
+                        sortable: true,
+                        ready: function () {
+                        },
+                        columns: [
+                            { text: 'FirstName', dataField: 'FirstName', width: 150 },
+                            { text: 'Last Name', dataField: 'LastName', width: 150 },
+                            { text: 'Title', dataField: 'Title', width: 200 },
+                            { text: 'Country', dataField: 'Country', width: 200 },
+                            { text: 'Hire Date', dataField: 'HireDate', width: 200 }
+                        ]
+                    });
+                });
+        });
+        </script>
+    </body>
+</html>
