@@ -1,79 +1,270 @@
 <!doctype html>
 <html class="no-js" lang="">
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="x-ua-compatible" content="ie=edge">
-        <title>TreeGrid Example</title>
-        <meta name="description" content="">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <link rel="stylesheet" href="css/normalize.css">
-        <link rel="stylesheet" href="css/main.css">
-        <link rel="stylesheet" href="css/vendor/bootstrap.min.css">
-        <link rel="stylesheet" href="css/vendor/jqx.base.css">
-        <link rel="stylesheet" href="css/vendor/jqx.bootstrap.css">
-    </head>
-    <body>
-        <h1>Tree Grid Example</h1>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>TreeGrid Example</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <div id="treeGrid">
-        </div>
+    <link rel="stylesheet" href="css/normalize.css">
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/vendor/bootstrap.min.css">
+    <link rel="stylesheet" href="css/vendor/jqx.base.css">
+    <link rel="stylesheet" href="css/vendor/jqx.bootstrap.css">
+</head>
 
-        <script src="js/vendor/jquery-3.2.1.min.js"></script>
-        <script src="js/vendor/popper.min.js"></script>
-        <script src="js/vendor/bootstrap.min.js"></script>
-        <script src="js/vendor/jqxcore.js"></script>
-        <script src="js/vendor/jqxdata.js"></script>
-        <script src="js/vendor/jqxbuttons.js"></script>
-        <script src="js/vendor/jqxscrollbar.js"></script>
-        <script src="js/vendor/jqxlistbox.js"></script>
-        <script src="js/vendor/jqxdropdownlist.js"></script>
-        <script src="js/vendor/jqxdatatable.js"></script>
-        <script src="js/vendor/jqxtreegrid.js"></script>
-        <script>
-            $(document).ready(function () {
-                $.getJSON('data.json', function(data) {
-                    var employees = data;
-                    // prepare the data
-                    var source = {
-                        dataType: "json",
-                        dataFields: [
-                            { name: 'EmployeeID', type: 'number' },
-                            { name: 'ReportsTo', type: 'number' },
-                            { name: 'FirstName', type: 'string' },
-                            { name: 'LastName', type: 'string' },
-                            { name: 'Country', type: 'string' },
-                            { name: 'City', type: 'string' },
-                            { name: 'Address', type: 'string' },
-                            { name: 'Title', type: 'string' },
-                            { name: 'HireDate', type: 'date' },
-                            { name: 'BirthDate', type: 'date' }
-                        ],
-                        hierarchy: {
-                            keyDataField: { name: 'EmployeeID' },
-                            parentDataField: { name: 'ReportsTo' }
-                        },
-                        id: 'EmployeeID',
-                        localData: employees
-                    };
-                    var dataAdapter = new $.jqx.dataAdapter(source);
+<body>
+    <h1>Tree Grid Example</h1>
 
-                    $("#treeGrid").jqxTreeGrid(
-                    {
-                        source: dataAdapter,
-                        sortable: true,
-                        ready: function () {
-                        },
-                        columns: [
-                            { text: 'FirstName', dataField: 'FirstName', width: 150 },
-                            { text: 'Last Name', dataField: 'LastName', width: 150 },
-                            { text: 'Title', dataField: 'Title', width: 200 },
-                            { text: 'Country', dataField: 'Country', width: 200 },
-                            { text: 'Hire Date', dataField: 'HireDate', width: 200 }
-                        ]
+    <div id="treeGrid">
+    </div>
+
+    <script src="js/vendor/jquery-3.2.1.min.js"></script>
+    <script src="js/vendor/popper.min.js"></script>
+    <script src="js/vendor/bootstrap.min.js"></script>
+    <script src="js/vendor/jqxcore.js"></script>
+    <script src="js/vendor/jqxdata.js"></script>
+    <script src="js/vendor/jqxbuttons.js"></script>
+    <script src="js/vendor/jqxscrollbar.js"></script>
+    <script src="js/vendor/jqxlistbox.js"></script>
+    <script src="js/vendor/jqxdropdownlist.js"></script>
+    <script src="js/vendor/jqxdatatable.js"></script>
+    <script src="js/vendor/jqxtreegrid.js"></script>
+    <script>
+
+        function rowExpandTreeGrid(key, endItemId) {
+            var storageMap = getSessionStorageMap(endItemId);
+            if (storageMap && storageMap["expanded"]) {
+                var map = storageMap["expanded"]
+                map[key] = ""
+                saveSessionStorageMap(endItemId, storageMap)
+            } else {
+                var newMap = {}
+                newMap[key] = ""
+                saveSessionStorageMap(endItemId, { 'expanded': newMap })
+            }
+        }
+        function rowCollapseTreeGrid(key, endItemId) {
+            var storageMap = getSessionStorageMap(endItemId);
+            if (storageMap && storageMap["expanded"]) {
+                var map = storageMap["expanded"]
+                delete map[key]
+                saveSessionStorageMap(endItemId, storageMap)
+            }
+        }
+
+        function saveSessionStorageMap(key, value) {
+            if (typeof (Storage) !== "undefined")
+                sessionStorage.setItem(key, JSON.stringify(value))
+        }
+
+
+        function getSessionStorageMap(key) {
+            var value = null
+            if (typeof (Storage) !== "undefined")
+                value = JSON.parse(sessionStorage.getItem(key))
+            return value
+        }
+
+        $(document).ready(function () {
+            var url = '';
+            var id = 'treeGrid';
+            $.getJSON('data.json', function (data) {
+                var dataFields = []
+                var columns = []
+                $.each(data.headers, function (idx, val) {
+                    var name = 'col' + idx;
+                    dataFields.push({
+                        'name': name,
+                        'type': 'string',
+                        'map': 'data>' + idx
                     });
+                    columns.push({
+                        'dataField': name,
+                        'text': val.value,
+                        'width': val.width,
+                        'pinned': val.pinned,
+                        'hidden': val.hidden,
+                        'cellsalign': val.cellalign,
+                        'align': val,
+                        //'cellClassName': function90{},
+                        //'cellsRenderer': cellsRendererFn,
+                    })
                 });
+                dataFields.push({
+                    name: 'rows',
+                    type: 'array'
+                });
+                dataFields.push({
+                    name: 'icon',
+                    type: 'string'
+                });
+                dataFields.push({
+                    name: 'child',
+                    type: 'string'
+                });
+                dataFields.push({
+                    name: 'expandedState',
+                    type: 'string',
+                    map: 'expanded'
+                });
+                dataFields.push({
+                    name: 'HeaderAttrs',
+                    type: 'string'
+                });
+                dataFields.push({
+                    name: 'Resource',
+                    type: 'string'
+                });
+                dataFields.push({
+                    name: 'DataFilesVaryInEC',
+                    type: 'string'
+                });
+                dataFields.push({
+                    name: 'ParentLock',
+                    type: 'string'
+                });
+                dataFields.push({
+                    name: 'CanEdit',
+                    type: 'string'
+                });
+                dataFields.push({
+                    name: 'ResourceLinkActive',
+                    type: 'string'
+                });
+                dataFields.push({
+                    name: 'Lock',
+                    type: 'string'
+                });
+                dataFields.push({
+                    name: 'perm',
+                    type: 'string'
+                });
+                dataFields.push({
+                    name: 'CheckedOut',
+                    type: 'string'
+                });
+                dataFields.push({
+                    name: 'ChangedDataFiles',
+                    type: 'string'
+                });
+                dataFields.push({
+                    name: 'PartId',
+                    type: 'string'
+                });
+                dataFields.push({
+                    name: 'LatestRev',
+                    type: 'string'
+                });
+                dataFields.push({
+                    name: 'RevNo',
+                    type: 'string'
+                });
+                columns
+                    .push({
+                        text: '',
+                        width: 60,
+                        cellsRenderer: function (rowKey, dataField, value, data) {
+                            var content = "<div class='dropdown' style='text-align:center;' data-rowid='"
+                                + rowKey
+                                + "'><a class='dropdown-toggle' type='button' style='color:black;' data-toggle='dropdown'><i class='fa fa-gear'></i></a></div>";
+                            return content;
+                        }
+                    });
+                var endItemId = data.rows[0].id;
+                // create Tree Grid
+                var ele = $("#" + id)
+                    .jqxTreeGrid(
+                    {
+                        width: '100%',
+                        height: '100%',
+                        columnsReorder: true,
+                        columnsResize: true,
+                        rendering: function () {
+                            // destroys the elements
+                            $(this.element).find("ul.dropdown-menu").remove();
+                        },
+                        // called when jqxTreeGrid is rendered.
+                        rendered: function () {
+                            var divEle = $("#table" + id + " .dropdown");
+                            divEle.mousedown(
+                                function (event) {
+                                    event.preventDefault();
+                                    event.stopImmediatePropagation();
+                                    //createMenuForBtn(event, id, params);
+                                });
+                            divEle.find("a").click(function (event) {
+                                event.preventDefault();
+                                event.stopImmediatePropagation();
+                            });
+                        },
+                        virtualModeCreateRecords: function (expandedRecord,
+                            done) {
+                            // prepare the data
+                            var that = this
+                            var source = {
+                                dataType: "json",
+                                dataFields: dataFields,
+                                id: 'id',
+                            }
+
+                            if (expandedRecord == null)
+                                source['localData'] = data.rows;
+                            else {
+                                rowExpandTreeGrid(expandedRecord.uid, endItemId);
+                                if (expandedRecord.rows && expandedRecord.rows.length > 0) {
+                                    source['localData'] = expandedRecord.rows;
+                                } else
+                                    source['url'] = url + '/expandItem';
+                            }
+                            var dataAdapter = new $.jqx.dataAdapter(source, {
+                                formatData: function (data) {
+                                    if (expandedRecord != null) {
+                                        data.id = expandedRecord.uid
+                                        data.hdnGroupId = params.groupId
+                                        data.revECNo = params.revECNo
+                                        data.ecId = params.ecId
+                                    }
+                                    return data;
+                                },
+                                loadComplete: function () {
+                                    done(dataAdapter.records);
+                                    $.each(dataAdapter.records, function (i, item) {
+                                        if (!item.expanded && item.expandedState == 'true')
+                                            that.expandRow(item.uid);
+                                    });
+                                },
+                                loadError: function (xhr, status, error) {
+                                    done(false);
+                                    throw new Error(
+                                        "http://services.odata.org: " + error.toString());
+                                }
+                            });
+                            dataAdapter.dataBind();
+                        },
+                        virtualModeRecordCreating: function (record) {
+                            if (!(record.child && record.child === 'true')) {
+                                record.leaf = true;
+                            }
+                        },
+                        sortable: true,
+                        hierarchicalCheckboxes: true,
+                        checkboxes: true,
+                        icons: true,
+                        altRows: true,
+                        selectionMode: 'singlerow',
+                        autoRowHeight: false,
+                        theme: 'bootstrap',
+                        columns: columns,
+                        ready: function () {
+
+                        }
+                    });
+            });
         });
-        </script>
-    </body>
+    </script>
+</body>
+
 </html>
