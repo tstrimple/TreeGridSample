@@ -21,6 +21,9 @@
     <div id="treeGrid">
     </div>
 
+    <div id="treeGrid1">
+    </div>
+
     <script src="js/vendor/jquery-3.2.1.min.js"></script>
     <script src="js/vendor/popper.min.js"></script>
     <script src="js/vendor/bootstrap.min.js"></script>
@@ -71,6 +74,49 @@
         $(document).ready(function () {
             var url = '';
             var id = 'treeGrid';
+            
+            $.getJSON('data1.json', function(data) {
+                    var employees = data;
+                    // prepare the data
+                    var source = {
+                        dataType: "json",
+                        dataFields: [
+                            { name: 'EmployeeID', type: 'number' },
+                            { name: 'ReportsTo', type: 'number' },
+                            { name: 'FirstName', type: 'string' },
+                            { name: 'LastName', type: 'string' },
+                            { name: 'Country', type: 'string' },
+                            { name: 'City', type: 'string' },
+                            { name: 'Address', type: 'string' },
+                            { name: 'Title', type: 'string' },
+                            { name: 'HireDate', type: 'date' },
+                            { name: 'BirthDate', type: 'date' }
+                        ],
+                        hierarchy: {
+                            keyDataField: { name: 'EmployeeID' },
+                            parentDataField: { name: 'ReportsTo' }
+                        },
+                        id: 'EmployeeID',
+                        localData: employees
+                    };
+                    var dataAdapter = new $.jqx.dataAdapter(source);
+
+                    $("#treeGrid1").jqxTreeGrid(
+                    {
+                        source: dataAdapter,
+                        sortable: true,
+                        ready: function () {
+                        },
+                        columns: [
+                            { text: 'FirstName', dataField: 'FirstName', width: 150 },
+                            { text: 'Last Name', dataField: 'LastName', width: 150 },
+                            { text: 'Title', dataField: 'Title', width: 200 },
+                            { text: 'Country', dataField: 'Country', width: 200 },
+                            { text: 'Hire Date', dataField: 'HireDate', width: 200 }
+                        ]
+                    });
+                });
+            
             $.getJSON('data.json', function (data) {
                 var dataFields = []
                 var columns = []
