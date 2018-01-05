@@ -72,6 +72,23 @@
                 value = JSON.parse(sessionStorage.getItem(key))
             return value
         }
+        
+        function cellsRendererFn(row, column, value, rowData){
+	        return value.value;
+        }
+        
+        function cellsStyleFn(row, column, value, rowData){
+            if(value)
+                if(value.bgcolor == "#FF6666")
+                    return "rules-violatedCell";
+                else if(value.bgcolor == "#FFFF66")
+                    return "guidelines-violatedCell";
+                else if(value.bgcolor == "#FFA500")
+                    return "ddorfileattrchanged";
+                else if(value.bgcolor == "#CCCCCC")
+                    return "greyCell";
+        }
+        
 
         $(document).ready(function () {
             var url = '';
@@ -137,8 +154,8 @@
                         'hidden': val.hidden,
                         'cellsalign': val.cellalign,
                         'align': val,
-                        //'cellClassName': function90{},
-                        //'cellsRenderer': cellsRendererFn,
+                        'cellClassName': cellsStyleFn,
+                        'cellsRenderer': cellsRendererFn
                     })
                 });
                 dataFields.push({
