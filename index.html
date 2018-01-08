@@ -89,6 +89,16 @@
                     return "greyCell";
         }
         
+        var ts = null;
+
+        function profile(message) {
+            if(!ts) {
+                ts = getTimestamp();
+            }
+
+            console.log(getTimestamp() - ts, message);
+        }
+
         function getTimestamp() {
             return window.performance && window.performance.now && window.performance.timing && window.performance.timing.navigationStart ? window.performance.now() + window.performance.timing.navigationStart : Date.now();
         }
@@ -98,12 +108,11 @@
             var id = 'treeGrid';
             
             $.getJSON('data.json', function (data) {
-                console.log(getTimestamp(), 'got data');
                 var dataFields = []
                 var columns = []
 
+                profile('start each');
                 $.each(data.headers, function (idx, val) {
-                    console.log(getTimestamp(), 'each:', idx);
                     var name = 'col' + idx;
                     dataFields.push({
                         'name': name,
@@ -122,8 +131,7 @@
                         'cellsRenderer': cellsRendererFn
                     })
                 });
-
-                console.log(getTimestamp(), 'done each');
+                profile('done each');
 
                 dataFields.push({
                     name: 'rows',
@@ -207,7 +215,7 @@
                     });
                 var endItemId = data.rows[0].id;
 
-                console.log(getTimestamp(), 'create tree grid');
+                profile('create tree grid');
 
                 // create Tree Grid
                 var ele = $("#" + id)
@@ -220,7 +228,7 @@
                         rendering: function () {
                             // destroys the elements
                             $(this.element).find("ul.dropdown-menu").remove();
-                            console.log(getTimestamp(), 'rendering');
+                            profile('rendering: ' + id);
                         },
                         // called when jqxTreeGrid is rendered.
                         rendered: function () {
@@ -235,9 +243,10 @@
                                 event.preventDefault();
                                 event.stopImmediatePropagation();
                             });
-                            console.log(getTimestamp(), 'rendered');
+                            profile('rendered: ' + id);
                         },
                         virtualModeCreateRecords: function (expandedRecord, done) {
+                            profile('startcreate: ' + id);
                             // prepare the data
                             var that = this
                             var source = {
@@ -279,6 +288,7 @@
                                 }
                             });
                             dataAdapter.dataBind();
+                            profile('endcreate: ' + id);
                         },
                         virtualModeRecordCreating: function (record) {
                             if (!(record.child && record.child === 'true')) {
@@ -295,11 +305,11 @@
                         //theme: 'bootstrap',
                         columns: columns,
                         ready: function () {
-                            console.log(getTimestamp(), 'ready');
+                            profile('ready');
                         }
                     });
-                console.log(getTimestamp(), 'script done');
-            });
+                    profile('ready');
+                });
         });
     </script>
 </body>
