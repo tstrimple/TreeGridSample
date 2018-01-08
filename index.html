@@ -89,17 +89,21 @@
                     return "greyCell";
         }
         
+        function getTimestamp() {
+            return window.performance && window.performance.now && window.performance.timing && window.performance.timing.navigationStart ? window.performance.now() + window.performance.timing.navigationStart : Date.now();
+        }
 
         $(document).ready(function () {
             var url = '';
             var id = 'treeGrid';
             
             $.getJSON('data.json', function (data) {
-                console.profile();
+                console.log(getTimestamp(), 'got data');
                 var dataFields = []
                 var columns = []
 
                 $.each(data.headers, function (idx, val) {
+                    console.log(getTimestamp(), 'each:', idx);
                     var name = 'col' + idx;
                     dataFields.push({
                         'name': name,
@@ -118,6 +122,8 @@
                         'cellsRenderer': cellsRendererFn
                     })
                 });
+
+                console.log(getTimestamp(), 'done each');
 
                 dataFields.push({
                     name: 'rows',
@@ -200,6 +206,9 @@
                         }
                     });
                 var endItemId = data.rows[0].id;
+
+                console.log(getTimestamp(), 'create tree grid');
+
                 // create Tree Grid
                 var ele = $("#" + id)
                     .jqxTreeGrid(
@@ -211,6 +220,7 @@
                         rendering: function () {
                             // destroys the elements
                             $(this.element).find("ul.dropdown-menu").remove();
+                            console.log(getTimestamp(), 'rendering');
                         },
                         // called when jqxTreeGrid is rendered.
                         rendered: function () {
@@ -225,9 +235,9 @@
                                 event.preventDefault();
                                 event.stopImmediatePropagation();
                             });
+                            console.log(getTimestamp(), 'rendered');
                         },
-                        virtualModeCreateRecords: function (expandedRecord,
-                            done) {
+                        virtualModeCreateRecords: function (expandedRecord, done) {
                             // prepare the data
                             var that = this
                             var source = {
@@ -285,11 +295,10 @@
                         //theme: 'bootstrap',
                         columns: columns,
                         ready: function () {
-
+                            console.log(getTimestamp(), 'ready');
                         }
                     });
-
-                    console.profileEnd();
+                console.log(getTimestamp(), 'script done');
             });
         });
     </script>
