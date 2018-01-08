@@ -38,7 +38,7 @@
     <script src="js/vendor/jqxdatatable.js"></script>
     <script src="js/vendor/jqxtreegrid.js"></script>
     <script>
-
+        profile('script start');
         function rowExpandTreeGrid(key, endItemId) {
             var storageMap = getSessionStorageMap(endItemId);
             if (storageMap && storageMap["expanded"]) {
@@ -225,28 +225,16 @@
                         height: '100%',
                         columnsReorder: true,
                         columnsResize: true,
+                        
                         rendering: function () {
-                            // destroys the elements
-                            $(this.element).find("ul.dropdown-menu").remove();
-                            profile('rendering: ' + id);
+                            profile('rendering');
                         },
-                        // called when jqxTreeGrid is rendered.
+                        
                         rendered: function () {
-                            var divEle = $("#table" + id + " .dropdown");
-                            divEle.mousedown(
-                                function (event) {
-                                    event.preventDefault();
-                                    event.stopImmediatePropagation();
-                                    //createMenuForBtn(event, id, params);
-                                });
-                            divEle.find("a").click(function (event) {
-                                event.preventDefault();
-                                event.stopImmediatePropagation();
-                            });
-                            profile('rendered: ' + id);
+                            profile('rendered');
                         },
+                        
                         virtualModeCreateRecords: function (expandedRecord, done) {
-                            profile('startcreate: ' + id);
                             // prepare the data
                             var that = this
                             var source = {
@@ -288,7 +276,6 @@
                                 }
                             });
                             dataAdapter.dataBind();
-                            profile('endcreate: ' + id);
                         },
                         virtualModeRecordCreating: function (record) {
                             if (!(record.child && record.child === 'true')) {
@@ -302,13 +289,12 @@
                         altRows: true,
                         selectionMode: 'singlerow',
                         autoRowHeight: false,
-                        //theme: 'bootstrap',
                         columns: columns,
                         ready: function () {
                             profile('ready');
                         }
                     });
-                    profile('ready');
+                    profile('end script');
                 });
         });
     </script>
