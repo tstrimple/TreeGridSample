@@ -40,6 +40,7 @@
     <script>
         profile('script start');
         function rowExpandTreeGrid(key, endItemId) {
+            profile('rowExpandTreeGrid');
             var storageMap = getSessionStorageMap(endItemId);
             if (storageMap && storageMap["expanded"]) {
                 var map = storageMap["expanded"]
@@ -52,6 +53,7 @@
             }
         }
         function rowCollapseTreeGrid(key, endItemId) {
+            profile('rowCollapseTreeGrid');
             var storageMap = getSessionStorageMap(endItemId);
             if (storageMap && storageMap["expanded"]) {
                 var map = storageMap["expanded"]
@@ -61,12 +63,14 @@
         }
 
         function saveSessionStorageMap(key, value) {
+            profile('saveSessionStorageMap');
             if (typeof (Storage) !== "undefined")
                 sessionStorage.setItem(key, JSON.stringify(value))
         }
 
 
         function getSessionStorageMap(key) {
+            profile('getSessionStorageMap');
             var value = null
             if (typeof (Storage) !== "undefined")
                 value = JSON.parse(sessionStorage.getItem(key))
@@ -74,10 +78,12 @@
         }
         
         function cellsRendererFn(row, column, value, rowData){
+            profile('cellsRendererFn');
 	        return value.value;
         }
         
         function cellsStyleFn(row, column, value, rowData){
+            profile('rowCollapseTreeGrid');
             if(value)
                 if(value.bgcolor == "#FF6666")
                     return "rules-violatedCell";
@@ -260,6 +266,7 @@
                                         data.revECNo = 213
                                         data.ecId = 321
                                     }
+                                    profile('format data');
                                     return data;
                                 },
                                 loadComplete: function () {
@@ -268,6 +275,7 @@
                                         if (!item.expanded && item.expandedState == 'true')
                                             that.expandRow(item.uid);
                                     });
+                                    profile('load complete');
                                 },
                                 loadError: function (xhr, status, error) {
                                     done(false);
