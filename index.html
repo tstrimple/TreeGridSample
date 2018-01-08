@@ -94,51 +94,11 @@
             var url = '';
             var id = 'treeGrid';
             
-            $.getJSON('data1.json', function(data) {
-                    var employees = data;
-                    // prepare the data
-                    var source = {
-                        dataType: "json",
-                        dataFields: [
-                            { name: 'EmployeeID', type: 'number' },
-                            { name: 'ReportsTo', type: 'number' },
-                            { name: 'FirstName', type: 'string' },
-                            { name: 'LastName', type: 'string' },
-                            { name: 'Country', type: 'string' },
-                            { name: 'City', type: 'string' },
-                            { name: 'Address', type: 'string' },
-                            { name: 'Title', type: 'string' },
-                            { name: 'HireDate', type: 'date' },
-                            { name: 'BirthDate', type: 'date' }
-                        ],
-                        hierarchy: {
-                            keyDataField: { name: 'EmployeeID' },
-                            parentDataField: { name: 'ReportsTo' }
-                        },
-                        id: 'EmployeeID',
-                        localData: employees
-                    };
-                    var dataAdapter = new $.jqx.dataAdapter(source);
-
-                    $("#treeGrid1").jqxTreeGrid(
-                    {
-                        source: dataAdapter,
-                        sortable: true,
-                        ready: function () {
-                        },
-                        columns: [
-                            { text: 'FirstName', dataField: 'FirstName', width: 150 },
-                            { text: 'Last Name', dataField: 'LastName', width: 150 },
-                            { text: 'Title', dataField: 'Title', width: 200 },
-                            { text: 'Country', dataField: 'Country', width: 200 },
-                            { text: 'Hire Date', dataField: 'HireDate', width: 200 }
-                        ]
-                    });
-                });
-            
             $.getJSON('data.json', function (data) {
+                console.profile();
                 var dataFields = []
                 var columns = []
+
                 $.each(data.headers, function (idx, val) {
                     var name = 'col' + idx;
                     dataFields.push({
@@ -158,6 +118,7 @@
                         'cellsRenderer': cellsRendererFn
                     })
                 });
+
                 dataFields.push({
                     name: 'rows',
                     type: 'array'
@@ -327,6 +288,8 @@
 
                         }
                     });
+
+                    console.endProfile();
             });
         });
     </script>
