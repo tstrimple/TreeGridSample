@@ -219,7 +219,8 @@
 
                 // create Tree Grid
                 var ele = $("#" + id)
-                    .jqxTreeGrid({
+                    .jqxTreeGrid(
+                    {
                         width: '100%',
                         height: '100%',
                         columnsReorder: true,
@@ -234,7 +235,6 @@
                         },
                         
                         virtualModeCreateRecords: function (expandedRecord, done) {
-                            profile('virtualModeCreateRecords');
                             // prepare the data
                             var that = this
                             var source = {
@@ -253,15 +253,21 @@
                                     source['url'] = url + '/expandItem';
                             }
                             var dataAdapter = new $.jqx.dataAdapter(source, {
+                                formatData: function (data) {
+                                    if (expandedRecord != null) {
+                                        data.id = expandedRecord.uid
+                                        data.hdnGroupId = 123
+                                        data.revECNo = 213
+                                        data.ecId = 321
+                                    }
+                                    return data;
+                                },
                                 loadComplete: function () {
                                     done(dataAdapter.records);
-                                    setTimeout(function() {
-                                        $.each(dataAdapter.records, function (i, item) {
-                                            if (!item.expanded && item.expandedState == 'true')
-                                                that.expandRow(item.uid);
-                                        });
-                                    }, 1);
-                                    profile('load complete');
+                                    $.each(dataAdapter.records, function (i, item) {
+                                        if (!item.expanded && item.expandedState == 'true')
+                                            that.expandRow(item.uid);
+                                    });
                                 },
                                 loadError: function (xhr, status, error) {
                                     done(false);
@@ -269,10 +275,7 @@
                                         "http://services.odata.org: " + error.toString());
                                 }
                             });
-
-                            setTimeout(function() {
-                                dataAdapter.dataBind();
-                            }, 1);
+                            dataAdapter.dataBind();
                         },
                         virtualModeRecordCreating: function (record) {
                             if (!(record.child && record.child === 'true')) {
