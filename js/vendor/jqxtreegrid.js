@@ -895,7 +895,7 @@ function getTimestamp() {
                         N.table.html(W + y)
                     })
                 } else {
-                    profile('start innerHTML');
+                    profile('start innerHTML: ' +  W.length + y.length);
                     N.table[0].innerHTML = W + y;
                     profile('end innerHTML');
                 }
@@ -925,7 +925,8 @@ function getTimestamp() {
                         N.table.html(y)
                     })
                 } else {
-                    profile('start innerHTML');
+                    profile('start innerHTML: ' + y.length);
+                    debugger;
                     N.table[0].innerHTML = y
                     profile('end innerHTML');
                 }

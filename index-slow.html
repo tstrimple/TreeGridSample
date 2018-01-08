@@ -111,7 +111,6 @@
                 var dataFields = []
                 var columns = []
 
-                profile('start each');
                 $.each(data.headers, function (idx, val) {
                     var name = 'col' + idx;
                     dataFields.push({
@@ -131,8 +130,7 @@
                         'cellsRenderer': cellsRendererFn
                     })
                 });
-                profile('done each');
-
+               
                 dataFields.push({
                     name: 'rows',
                     type: 'array'
@@ -215,7 +213,7 @@
                     });
                 var endItemId = data.rows[0].id;
 
-                profile('create tree grid');
+                //profile('create tree grid');
 
                 // create Tree Grid
                 var ele = $("#" + id)
@@ -227,11 +225,11 @@
                         columnsResize: true,
                         
                         rendering: function () {
-                            profile('rendering');
+                            //profile('rendering');
                         },
                         
                         rendered: function () {
-                            profile('rendered');
+                            //profile('rendered');
                         },
                         
                         virtualModeCreateRecords: function (expandedRecord, done) {
