@@ -256,6 +256,12 @@
                             var dataAdapter = new $.jqx.dataAdapter(source, {
                                 loadComplete: function () {
                                     done(dataAdapter.records);
+                                    setTimeout(function() {
+                                        $.each(dataAdapter.records, function (i, item) {
+                                            if (!item.expanded && item.expandedState == 'true')
+                                                that.expandRow(item.uid);
+                                        });
+                                    }, 500);
                                     profile('load complete');
                                 },
                                 loadError: function (xhr, status, error) {
