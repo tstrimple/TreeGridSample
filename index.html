@@ -219,8 +219,7 @@
 
                 // create Tree Grid
                 var ele = $("#" + id)
-                    .jqxTreeGrid(
-                    {
+                    .jqxTreeGrid({
                         width: '100%',
                         height: '100%',
                         columnsReorder: true,
@@ -261,7 +260,7 @@
                                             if (!item.expanded && item.expandedState == 'true')
                                                 that.expandRow(item.uid);
                                         });
-                                    }, 500);
+                                    }, 1);
                                     profile('load complete');
                                 },
                                 loadError: function (xhr, status, error) {
