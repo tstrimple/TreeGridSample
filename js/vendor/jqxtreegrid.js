@@ -926,7 +926,6 @@ function getTimestamp() {
                     })
                 } else {
                     profile('start innerHTML: ' + y.length);
-                    debugger;
                     N.table[0].innerHTML = y
                     profile('end innerHTML');
                 }
