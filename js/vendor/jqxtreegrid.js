@@ -3,6 +3,17 @@ jQWidgets v5.5.0 (2017-Dec)
 Copyright (c) 2011-2017 jQWidgets.
 License: https://jqwidgets.com/license/
 */
+function profile(message) {
+    if(!ts) {
+        ts = getTimestamp();
+    }
+
+    console.log(getTimestamp() - ts, message);
+}
+
+function getTimestamp() {
+    return window.performance && window.performance.now && window.performance.timing && window.performance.timing.navigationStart ? window.performance.now() + window.performance.timing.navigationStart : Date.now();
+}
 
 (function(a) {
     a.jqx.jqxWidget("jqxTreeGrid", "jqxDataTable", {});
@@ -235,9 +246,9 @@ License: https://jqwidgets.com/license/
                 }
             }
             if (N.rendering) {
-                debugger;
-                console.log('hacking jqx');
+                profile('start rendering')
                 N.rendering()
+                profile('end rendering')
             }
             var ay = 0;
             N.table[0].rows = new Array();
@@ -884,8 +895,9 @@ License: https://jqwidgets.com/license/
                         N.table.html(W + y)
                     })
                 } else {
-                    debugger;
-                    N.table[0].innerHTML = W + y
+                    profile('start innerHTML');
+                    N.table[0].innerHTML = W + y;
+                    profile('end innerHTML');
                 }
                 var aD = N.table.find("#table" + N.element.id);
                 var aE = N.table.find("#pinnedtable" + N.element.id);
@@ -913,8 +925,9 @@ License: https://jqwidgets.com/license/
                         N.table.html(y)
                     })
                 } else {
-                    debugger;
+                    profile('start innerHTML');
                     N.table[0].innerHTML = y
+                    profile('end innerHTML');
                 }
                 var K = N.table.find("#table" + N.element.id);
                 N._table = K;
