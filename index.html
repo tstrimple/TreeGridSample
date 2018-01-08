@@ -235,6 +235,7 @@
                         },
                         
                         virtualModeCreateRecords: function (expandedRecord, done) {
+                            profile('virtualModeCreateRecords');
                             // prepare the data
                             var that = this
                             var source = {
@@ -255,6 +256,10 @@
                             var dataAdapter = new $.jqx.dataAdapter(source, {
                                 loadComplete: function () {
                                     done(dataAdapter.records);
+                                    $.each(dataAdapter.records, function (i, item) {
+                                        if (!item.expanded && item.expandedState == 'true')
+                                            that.expandRow(item.uid);
+                                    });
                                     profile('load complete');
                                 },
                                 loadError: function (xhr, status, error) {
