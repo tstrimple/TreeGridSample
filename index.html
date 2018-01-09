@@ -18,7 +18,7 @@
 <body>
     <h1>Tree Grid Example</h1>
 
-    <div style="width:800px;height:600px;">
+    <div style="width:80%;height:600px;">
         <div id="treeGrid">
         </div>
     </div>
@@ -38,7 +38,6 @@
     <script src="js/vendor/jqxdatatable.js"></script>
     <script src="js/vendor/jqxtreegrid.js"></script>
     <script>
-        profile('script start');
         function rowExpandTreeGrid(key, endItemId) {
             var storageMap = getSessionStorageMap(endItemId);
             if (storageMap && storageMap["expanded"]) {
@@ -111,9 +110,8 @@
                 var dataFields = []
                 var columns = []
 
-                profile('start each');
                 $.each(data.headers, function (idx, val) {
-                    var name = 'col' + idx;
+                        var name = 'col' + idx;
                     dataFields.push({
                         'name': name,
                         'type': 'string',
@@ -131,91 +129,26 @@
                         'cellsRenderer': cellsRendererFn
                     })
                 });
-                profile('done each');
 
-                dataFields.push({
-                    name: 'rows',
-                    type: 'array'
-                });
-                dataFields.push({
-                    name: 'icon',
-                    type: 'string'
-                });
-                dataFields.push({
-                    name: 'child',
-                    type: 'string'
-                });
-                dataFields.push({
-                    name: 'expandedState',
-                    type: 'string',
-                    map: 'expanded'
-                });
-                dataFields.push({
-                    name: 'HeaderAttrs',
-                    type: 'string'
-                });
-                dataFields.push({
-                    name: 'Resource',
-                    type: 'string'
-                });
-                dataFields.push({
-                    name: 'DataFilesVaryInEC',
-                    type: 'string'
-                });
-                dataFields.push({
-                    name: 'ParentLock',
-                    type: 'string'
-                });
-                dataFields.push({
-                    name: 'CanEdit',
-                    type: 'string'
-                });
-                dataFields.push({
-                    name: 'ResourceLinkActive',
-                    type: 'string'
-                });
-                dataFields.push({
-                    name: 'Lock',
-                    type: 'string'
-                });
-                dataFields.push({
-                    name: 'perm',
-                    type: 'string'
-                });
-                dataFields.push({
-                    name: 'CheckedOut',
-                    type: 'string'
-                });
-                dataFields.push({
-                    name: 'ChangedDataFiles',
-                    type: 'string'
-                });
-                dataFields.push({
-                    name: 'PartId',
-                    type: 'string'
-                });
-                dataFields.push({
-                    name: 'LatestRev',
-                    type: 'string'
-                });
-                dataFields.push({
-                    name: 'RevNo',
-                    type: 'string'
-                });
-                columns
-                    .push({
-                        text: '',
-                        width: 60,
-                        cellsRenderer: function (rowKey, dataField, value, data) {
-                            var content = "<div class='dropdown' style='text-align:center;' data-rowid='"
-                                + rowKey
-                                + "'><a class='dropdown-toggle' type='button' style='color:black;' data-toggle='dropdown'><i class='fa fa-gear'></i></a></div>";
-                            return content;
-                        }
-                    });
+                dataFields.push({ name: 'rows', type: 'array' });
+                dataFields.push({ name: 'icon', type: 'string' });
+                dataFields.push({ name: 'child', type: 'string' });
+                dataFields.push({ name: 'expandedState', type: 'string', map: 'expanded' });
+                dataFields.push({ name: 'HeaderAttrs', type: 'string' });
+                dataFields.push({ name: 'Resource', type: 'string' });
+                dataFields.push({ name: 'DataFilesVaryInEC', type: 'string' });
+                dataFields.push({ name: 'ParentLock', type: 'string' });
+                dataFields.push({ name: 'CanEdit', type: 'string' });
+                dataFields.push({ name: 'ResourceLinkActive', type: 'string' });
+                dataFields.push({ name: 'Lock', type: 'string' });
+                dataFields.push({ name: 'perm', type: 'string' });
+                dataFields.push({ name: 'CheckedOut', type: 'string' });
+                dataFields.push({ name: 'ChangedDataFiles', type: 'string' });
+                dataFields.push({ name: 'PartId', type: 'string' });
+                dataFields.push({ name: 'LatestRev', type: 'string' });
+                dataFields.push({ name: 'RevNo', type: 'string' });
+                
                 var endItemId = data.rows[0].id;
-
-                profile('create tree grid');
 
                 // create Tree Grid
                 var ele = $("#" + id)
@@ -225,59 +158,35 @@
                         columnsReorder: true,
                         columnsResize: true,
                         
-                        rendering: function () {
-                            profile('rendering');
-                        },
-                        
-                        rendered: function () {
-                            profile('rendered');
-                        },
-                        
                         virtualModeCreateRecords: function (expandedRecord, done) {
-                            profile('virtualModeCreateRecords');
-                            // prepare the data
                             var that = this
+
                             var source = {
-                                dataType: "json",
+                                dataType: 'json',
                                 dataFields: dataFields,
                                 id: 'id',
                             }
 
-                            if (expandedRecord == null)
+                            if (expandedRecord == null) {
                                 source['localData'] = data.rows;
-                            else {
+                                console.log(JSON.stringify(data.rows));
+                            } else {
                                 rowExpandTreeGrid(expandedRecord.uid, endItemId);
                                 if (expandedRecord.rows && expandedRecord.rows.length > 0) {
                                     source['localData'] = expandedRecord.rows;
-                                } else
+                                } else {
                                     source['url'] = url + '/expandItem';
+                                }
                             }
                             var dataAdapter = new $.jqx.dataAdapter(source, {
-                                loadComplete: function () {
-                                    done(dataAdapter.records);
-                                    setTimeout(function() {
-                                        $.each(dataAdapter.records, function (i, item) {
-                                            if (!item.expanded && item.expandedState == 'true')
-                                                that.expandRow(item.uid);
-                                        });
-                                    }, 1);
-                                    profile('load complete');
-                                },
-                                loadError: function (xhr, status, error) {
-                                    done(false);
-                                    throw new Error(
-                                        "http://services.odata.org: " + error.toString());
-                                }
+                                loadComplete: function () { done(dataAdapter.records); },
+                                loadError: function (xhr, status, error) { done(false); }
                             });
-
-                            setTimeout(function() {
-                                dataAdapter.dataBind();
-                            }, 1);
+                            
+                            dataAdapter.dataBind();
                         },
                         virtualModeRecordCreating: function (record) {
-                            if (!(record.child && record.child === 'true')) {
-                                record.leaf = true;
-                            }
+                            record.leaf = !(record.child && record.child === 'true');
                         },
                         sortable: true,
                         hierarchicalCheckboxes: true,
@@ -286,12 +195,8 @@
                         altRows: true,
                         selectionMode: 'singlerow',
                         autoRowHeight: false,
-                        columns: columns,
-                        ready: function () {
-                            profile('ready');
-                        }
+                        columns: columns
                     });
-                    profile('end script');
                 });
         });
     </script>
