@@ -38,56 +38,10 @@
     <script src="js/vendor/jqxdatatable.js"></script>
     <script src="js/vendor/jqxtreegrid.js"></script>
     <script>
-        function rowExpandTreeGrid(key, endItemId) {
-            var storageMap = getSessionStorageMap(endItemId);
-            if (storageMap && storageMap["expanded"]) {
-                var map = storageMap["expanded"]
-                map[key] = ""
-                saveSessionStorageMap(endItemId, storageMap)
-            } else {
-                var newMap = {}
-                newMap[key] = ""
-                saveSessionStorageMap(endItemId, { 'expanded': newMap })
-            }
-        }
-        function rowCollapseTreeGrid(key, endItemId) {
-            var storageMap = getSessionStorageMap(endItemId);
-            if (storageMap && storageMap["expanded"]) {
-                var map = storageMap["expanded"]
-                delete map[key]
-                saveSessionStorageMap(endItemId, storageMap)
-            }
-        }
-
-        function saveSessionStorageMap(key, value) {
-            if (typeof (Storage) !== "undefined")
-                sessionStorage.setItem(key, JSON.stringify(value))
-        }
-
-
-        function getSessionStorageMap(key) {
-            var value = null
-            if (typeof (Storage) !== "undefined")
-                value = JSON.parse(sessionStorage.getItem(key))
-            return value
-        }
-        
-        function cellsRendererFn(row, column, value, rowData){
+        function cellsRendererFn(row, column, value, rowData) {
 	        return value.value;
         }
-        
-        function cellsStyleFn(row, column, value, rowData){
-            if(value)
-                if(value.bgcolor == "#FF6666")
-                    return "rules-violatedCell";
-                else if(value.bgcolor == "#FFFF66")
-                    return "guidelines-violatedCell";
-                else if(value.bgcolor == "#FFA500")
-                    return "ddorfileattrchanged";
-                else if(value.bgcolor == "#CCCCCC")
-                    return "greyCell";
-        }
-        
+
         var ts = null;
 
         function profile(message) {
@@ -111,43 +65,30 @@
                 var columns = []
 
                 $.each(data.headers, function (idx, val) {
+                    if(!val.hidden) {
                         var name = 'col' + idx;
-                    dataFields.push({
-                        'name': name,
-                        'type': 'string',
-                        'map': 'data>' + idx
-                    });
-                    columns.push({
-                        'dataField': name,
-                        'text': val.value,
-                        'width': val.width,
-                        'pinned': val.pinned,
-                        'hidden': val.hidden,
-                        'cellsalign': val.cellalign,
-                        'align': val,
-                        'cellClassName': cellsStyleFn,
-                        'cellsRenderer': cellsRendererFn
-                    })
+                        dataFields.push({
+                            'name': name,
+                            'type': 'string',
+                            'map': 'data>' + idx
+                        });
+                        columns.push({
+                            'dataField': name,
+                            'text': val.value,
+                            'width': val.width,
+                            'pinned': val.pinned,
+                            'cellsRenderer': cellsRendererFn
+                        })
+                    }
                 });
 
                 dataFields.push({ name: 'rows', type: 'array' });
                 dataFields.push({ name: 'icon', type: 'string' });
                 dataFields.push({ name: 'child', type: 'string' });
                 dataFields.push({ name: 'expandedState', type: 'string', map: 'expanded' });
-                dataFields.push({ name: 'HeaderAttrs', type: 'string' });
-                dataFields.push({ name: 'Resource', type: 'string' });
-                dataFields.push({ name: 'DataFilesVaryInEC', type: 'string' });
-                dataFields.push({ name: 'ParentLock', type: 'string' });
-                dataFields.push({ name: 'CanEdit', type: 'string' });
-                dataFields.push({ name: 'ResourceLinkActive', type: 'string' });
-                dataFields.push({ name: 'Lock', type: 'string' });
-                dataFields.push({ name: 'perm', type: 'string' });
-                dataFields.push({ name: 'CheckedOut', type: 'string' });
-                dataFields.push({ name: 'ChangedDataFiles', type: 'string' });
-                dataFields.push({ name: 'PartId', type: 'string' });
-                dataFields.push({ name: 'LatestRev', type: 'string' });
-                dataFields.push({ name: 'RevNo', type: 'string' });
                 
+                console.log(columns.length, dataFields.length);
+
                 var endItemId = data.rows[0].id;
 
                 // create Tree Grid
@@ -169,9 +110,7 @@
 
                             if (expandedRecord == null) {
                                 source['localData'] = data.rows;
-                                console.log(JSON.stringify(data.rows));
                             } else {
-                                rowExpandTreeGrid(expandedRecord.uid, endItemId);
                                 if (expandedRecord.rows && expandedRecord.rows.length > 0) {
                                     source['localData'] = expandedRecord.rows;
                                 } else {

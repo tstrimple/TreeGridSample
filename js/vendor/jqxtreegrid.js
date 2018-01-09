@@ -3,17 +3,6 @@ jQWidgets v5.5.0 (2017-Dec)
 Copyright (c) 2011-2017 jQWidgets.
 License: https://jqwidgets.com/license/
 */
-function profile(message) {
-    if(!ts) {
-        ts = getTimestamp();
-    }
-
-    console.log(getTimestamp() - ts, message);
-}
-
-function getTimestamp() {
-    return window.performance && window.performance.now && window.performance.timing && window.performance.timing.navigationStart ? window.performance.now() + window.performance.timing.navigationStart : Date.now();
-}
 
 (function(a) {
     a.jqx.jqxWidget("jqxTreeGrid", "jqxDataTable", {});
@@ -246,9 +235,9 @@ function getTimestamp() {
                 }
             }
             if (N.rendering) {
-                profile('start rendering')
+                debugger;
+                console.log('hacking jqx');
                 N.rendering()
-                profile('end rendering')
             }
             var ay = 0;
             N.table[0].rows = new Array();
@@ -895,9 +884,7 @@ function getTimestamp() {
                         N.table.html(W + y)
                     })
                 } else {
-                    profile('start innerHTML: ');
-                    $(N.table[0]).html(W + y);
-                    profile('end innerHTML');
+                    N.table[0].innerHTML = W + y
                 }
                 var aD = N.table.find("#table" + N.element.id);
                 var aE = N.table.find("#pinnedtable" + N.element.id);
@@ -925,9 +912,7 @@ function getTimestamp() {
                         N.table.html(y)
                     })
                 } else {
-                    profile('start innerHTML: ');
-                    $(N.table[0]).html(y);
-                    profile('end innerHTML');
+                    N.table[0].innerHTML = y
                 }
                 var K = N.table.find("#table" + N.element.id);
                 N._table = K;
