@@ -896,7 +896,7 @@ function getTimestamp() {
                     })
                 } else {
                     profile('start innerHTML: ');
-                    $(N.table[0]).append(W + y);
+                    $(N.table[0]).html(W + y);
                     profile('end innerHTML');
                 }
                 var aD = N.table.find("#table" + N.element.id);
@@ -926,7 +926,7 @@ function getTimestamp() {
                     })
                 } else {
                     profile('start innerHTML: ');
-                    $(N.table[0]).append(y);
+                    $(N.table[0]).html(y);
                     profile('end innerHTML');
                 }
                 var K = N.table.find("#table" + N.element.id);
