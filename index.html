@@ -118,8 +118,18 @@
                                 }
                             }
                             var dataAdapter = new $.jqx.dataAdapter(source, {
-                                loadComplete: function () { done(dataAdapter.records); },
-                                loadError: function (xhr, status, error) { done(false); }
+                                loadComplete: function () { 
+                                    done(dataAdapter.records);
+                                    setTimeout(function() {
+                                        $.each(dataAdapter.records, function (i, item) {
+                                            if (!item.expanded && item.expandedState == 'true')
+                                                that.expandRow(item.uid);
+                                        });
+                                    }, 1); 
+                                },
+                                loadError: function (xhr, status, error) { 
+                                    done(false); 
+                                }
                             });
                             
                             dataAdapter.dataBind();
